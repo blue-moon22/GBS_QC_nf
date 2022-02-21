@@ -1,0 +1,10 @@
+{
+    "relative_abundance": [
+        "rel_abundance",
+        "rel_abundance_status"
+    ],
+    "gc_coverage": [
+        "gc_coverage",
+        "gc_coverage_status"
+    ]
+}
