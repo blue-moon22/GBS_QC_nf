@@ -1,5 +1,4 @@
 from unittest import TestCase
-from unittest.mock import patch, Mock, call, ANY
 
 from lib.get_headers import *
 

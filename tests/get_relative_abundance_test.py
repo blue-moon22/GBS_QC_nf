@@ -1,5 +1,5 @@
 from unittest import TestCase
-from unittest.mock import patch, Mock, call, ANY
+from unittest.mock import patch, call
 
 import os
 from bin.get_relative_abundance import *
