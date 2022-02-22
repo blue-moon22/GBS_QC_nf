@@ -10,11 +10,11 @@ def get_relative_abundance(kraken_report, species):
     """Get the relative abundance for a species from the kraken report"""
 
     rel_abnd = None
-    file = open(kraken_report, "r")
-    for line in file:
-        if re.search(f'{species}$', line):
-            rel_abnd = float(line.split('\t')[0].lstrip().split(' ')[0])
-            break
+    with open(kraken_report, "r") as file:
+        for line in file:
+            if re.search(f'{species}$', line):
+                rel_abnd = float(line.split('\t')[0].lstrip().split(' ')[0])
+                break
 
     return rel_abnd
 
