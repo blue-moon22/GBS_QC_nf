@@ -8,22 +8,17 @@ nextflow.enable.dsl=2
 
 // Import modules
 include {relative_abundance} from './modules/relative_abundance.nf'
-include {get_kraken_reports_from_lanes} from './modules/get_kraken_reports_from_lanes.nf'
+include {get_file_destinations} from './modules/get_file_destinations.nf'
 
 // Workflow for reads QC
 workflow reads_qc {
     take:
-    kraken_reports_ch
+    file_dest_ch
     headers_ch
+    lanes_ch
 
-    main:
-    kraken_reports_ch
-    .splitCsv(header:false, sep:"\t")
-    .map { row -> tuple(row[0], file(row[1])) }
-    .combine(headers_ch)
-    .set { lane_kraken_report_ch }
-        
-    relative_abundance(lane_kraken_report_ch)
+    main:        
+    relative_abundance(file_dest_ch, headers_ch, lanes_ch)
 
     emit:
     relative_abundance.out
@@ -37,7 +32,7 @@ workflow {
     // Create read pairs channel
     if (params.lanes) {
         lanes_ch = Channel.fromPath( params.lanes, checkIfExists: true )
-        get_kraken_reports_from_lanes(lanes_ch)
+        get_file_destinations(lanes_ch)
 
     } else {
         println("Error: You must specify a text file of lanes as --lanes <file with list of lanes>")
@@ -46,7 +41,7 @@ workflow {
 
     // Run reads QC
     headers_ch = Channel.fromPath( params.headers, checkIfExists: true )
-    reads_qc(get_kraken_reports_from_lanes.out, headers_ch)
+    reads_qc(get_file_destinations.out, headers_ch, lanes_ch)
 
     // Collate QC reports
     reads_qc.out
