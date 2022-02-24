@@ -5,91 +5,64 @@ import os
 from bin.get_relative_abundance import *
 
 class GetRelativeAbundance(TestCase):
-    TEST_LANE_ID = 'lane1'
-    TEST_LANE_ID2 = 'lane2'
+    TEST_LANE_ID = 'test_lane1'
+    TEST_LANE_ID2 = 'test_lane2'
+    TEST_LANE_ID3 = 'test_lane3'
     TEST_DATA_DIR = 'tests/test_data'
-    TEST_KRAKEN_REPORT = f'{TEST_DATA_DIR}/test_{TEST_LANE_ID}_kraken.report'
-    TEST_KRAKEN_REPORT_MULTIPLE_LEADING_WHITESPACE  = f'{TEST_DATA_DIR}/test_{TEST_LANE_ID2}_kraken.report.multiple_leading_whitespace'
-    TEST_KRAKEN_REPORT_EMPTY = f'{TEST_DATA_DIR}/test_empty_kraken.report'
-    TEST_OUTPUT_FILE = f'tests/test_data/{TEST_LANE_ID}_relative_abundance.tab'
-    TEST_OUTPUT_FILE2 = f'tests/test_data/{TEST_LANE_ID2}_relative_abundance.tab'
+    TEST_KRAKEN_REPORT = f'{TEST_DATA_DIR}/{TEST_LANE_ID}/kraken.report'
+    TEST_KRAKEN_REPORT_MULTIPLE_LEADING_WHITESPACE  = f'{TEST_DATA_DIR}/{TEST_LANE_ID2}/kraken.report'
+    TEST_KRAKEN_REPORT_EMPTY = f'{TEST_DATA_DIR}/{TEST_LANE_ID3}/kraken.report'
+    TEST_OUTPUT_FILE = f'tests/test_data/relative_abundance.tab'
+    TEST_OUTPUT_FILE2 = f'tests/test_data/relative_abundance2.tab'
+    TEST_DEST_FILE = f'{TEST_DATA_DIR}/test_file_dest.txt'
+    TEST_LANE_IDS = f'{TEST_DATA_DIR}/test_lane_ids.txt'
+    TEST_HEADERS_FILE = f'{TEST_DATA_DIR}/test_headers.json'
 
-    def test_get_relative_abundance(self):
-        actual = get_relative_abundance(self.TEST_KRAKEN_REPORT, "Streptococcus agalactiae")
+
+    def test_search_rel_abund(self):
+        actual = search_rel_abund(self.TEST_KRAKEN_REPORT, "Streptococcus agalactiae")
 
         self.assertEqual(92.38, actual)
 
-    def test_get_relative_abundance_multiple_leading_whitespace(self):
-        """
-        Tests parsing of kraken report when there is more than one whitespace prior to relative abundance number.
-        This case is known to occur when relative abundance is <10.
-        """
-        actual = get_relative_abundance(self.TEST_KRAKEN_REPORT_MULTIPLE_LEADING_WHITESPACE, "Streptococcus agalactiae")
+    def test_get_relative_abundance(self):
+        actual = get_relative_abundance(['tests/test_data/test_lane1', 'tests/test_data/test_lane2', 'tests/test_data/test_lane3'], [self.TEST_LANE_ID, self.TEST_LANE_ID2, self.TEST_LANE_ID3, "test_lane4"], "Streptococcus agalactiae")
 
-        self.assertEqual(2.38, actual)
+        self.assertEqual([("test_lane1", 92.38), ("test_lane2", 2.38), ("test_lane3", None), ("test_lane4", None)], actual)
 
-    def test_get_relative_abundance_empty_kraken_report(self):
-        actual = get_relative_abundance(self.TEST_KRAKEN_REPORT_EMPTY, "Streptococcus agalactiae")
-
-        self.assertEqual(None, actual)
-
-    def test_write_qc_status_pass(self):
-        write_qc_status(self.TEST_LANE_ID, 70, 92.38, [ "rel_abundance", "rel_abundance_status"], self.TEST_OUTPUT_FILE)
+    def test_write_qc_status(self):
+        write_qc_status([("lane1", 92.38), ("lane2", 2.38), ("lane3", None), ("lane4", None)], 70, [ "rel_abundance", "rel_abundance_status"], self.TEST_OUTPUT_FILE)
 
         file = open(self.TEST_OUTPUT_FILE, "r")
         actual = "".join(file.readlines())
         os.remove(self.TEST_OUTPUT_FILE)
 
-        self.assertEqual(actual, """lane_id\trel_abundance\trel_abundance_status\nlane1\t92.38\tPASS\n""")
+        self.assertEqual(actual, """lane_id\trel_abundance\trel_abundance_status\nlane1\t92.38\tPASS\nlane2\t2.38\tFAIL\nlane3\t\t\nlane4\t\t\n""")
 
-    def test_write_qc_status_fail(self):
-        write_qc_status(self.TEST_LANE_ID2, 70, 2.38, ["rel_abundance", "rel_abundance_status"], self.TEST_OUTPUT_FILE2)
+    def test_arguments(self):
+        actual = get_arguments().parse_args(
+            ['--lane_ids', 'lane_file', '--file_dest', 'kraken_reports', '--species', 'Streptococcus agalactiae', '--threshold', '70',
+            '--headers', 'header_json', '--output_file', 'output_tab_file'])
+        self.assertEqual(actual,
+                         argparse.Namespace(lane_ids='lane_file', file_dest='kraken_reports', species='Streptococcus agalactiae',
+                         threshold=70.0, headers='header_json', output_file='output_tab_file'))
+
+    def test_arguments_short_options(self):
+        actual = get_arguments().parse_args(
+            ['-l', 'lane_file', '-d', 'kraken_reports', '-s', 'Streptococcus agalactiae', '-t', '70',
+            '-j', 'header_json', '-o', 'output_tab_file'])
+        self.assertEqual(actual,
+                         argparse.Namespace(lane_ids='lane_file', file_dest='kraken_reports', species='Streptococcus agalactiae',
+                         threshold=70.0, headers='header_json', output_file='output_tab_file'))
+
+    def test_main(self):
+        args = get_arguments().parse_args(
+            ['--lane_ids', self.TEST_LANE_IDS, '--file_dest', self.TEST_DEST_FILE, '--species', 'Streptococcus agalactiae', '--threshold', '70',
+            '--headers', self.TEST_HEADERS_FILE, '--output_file', self.TEST_OUTPUT_FILE2])
+
+        main(args)
 
         file = open(self.TEST_OUTPUT_FILE2, "r")
         actual = "".join(file.readlines())
         os.remove(self.TEST_OUTPUT_FILE2)
 
-        self.assertEqual(actual, """lane_id\trel_abundance\trel_abundance_status\nlane2\t2.38\tFAIL\n""")
-
-    def test_write_qc_status_none(self):
-        write_qc_status(self.TEST_LANE_ID, 70, None, ["rel_abundance", "rel_abundance_status"], self.TEST_OUTPUT_FILE)
-
-        file = open(self.TEST_OUTPUT_FILE, "r")
-        actual = "".join(file.readlines())
-        os.remove(self.TEST_OUTPUT_FILE)
-
-        self.assertEqual(actual, """lane_id\trel_abundance\trel_abundance_status\nlane1\t\t\n""")
-
-    def test_arguments(self):
-        actual = get_arguments().parse_args(
-            ['--lane_id', 'lane1', '--kraken_report', 'kraken_report', '--species', 'Streptococcus agalactiae', '--threshold', '70',
-            '--headers', 'header_json', '--output_file', 'output_tab_file'])
-        self.assertEqual(actual,
-                         argparse.Namespace(lane_id='lane1', kraken_report='kraken_report', species='Streptococcus agalactiae',
-                         threshold=70.0, headers='header_json', output_file='output_tab_file'))
-
-    def test_arguments_short_options(self):
-        actual = get_arguments().parse_args(
-            ['-l', 'lane1', '-k', 'kraken_report', '-s', 'Streptococcus agalactiae', '-t', '70',
-            '-j', 'header_json', '-o', 'output_tab_file'])
-        self.assertEqual(actual,
-                         argparse.Namespace(lane_id='lane1', kraken_report='kraken_report', species='Streptococcus agalactiae',
-                         threshold=70.0, headers='header_json', output_file='output_tab_file'))
-
-
-    @patch('bin.get_relative_abundance.get_arguments')
-    @patch('bin.get_relative_abundance.read_header_json')
-    @patch('bin.get_relative_abundance.get_relative_abundance')
-    @patch('bin.get_relative_abundance.write_qc_status')
-    def test_main(self, mock_write_qc_status, mock_get_relative_abundance, mock_read_header_json, mock_get_arguments):
-        mock_get_arguments = get_arguments().parse_args(
-            ['--lane_id', 'lane1', '--kraken_report', 'kraken_report', '--species', 'Streptococcus agalactiae', '--threshold', '70',
-            '--headers', 'header_json', '--output_file', 'output_tab_file'])
-        mock_read_header_json.return_value = {'relative_abundance': ['lane_id', 'rel_abundance', 'rel_abundance_status']}
-        mock_get_relative_abundance.return_value = 92.38
-
-        main()
-
-        mock_read_header_json.call_args_list = call('header_json')
-        mock_get_relative_abundance.call_args_list = call('kraken_report', 'Streptococcus agalactiae')
-        mock_write_qc_status.call_args_list = call('lane1', 70.0, 92.38, ['lane_id', 'rel_abundance', 'rel_abundance_status'], 'output_tab_file')
+        self.assertEqual(actual, """lane_id\trel_abundance\trel_abundance_status\ntest_lane1\t92.38\tPASS\ntest_lane2\t2.38\tFAIL\ntest_lane3\t\t\ntest_lane4\t\t\n""")

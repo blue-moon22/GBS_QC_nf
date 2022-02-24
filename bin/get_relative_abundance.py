@@ -6,40 +6,73 @@ import pandas as pd
 
 from lib.get_headers import read_header_json
 
-def get_relative_abundance(kraken_report, species):
-    """Get the relative abundance for a species from the kraken report"""
+def search_rel_abund(kraken_report, species):
 
     rel_abnd = None
-    with open(kraken_report, "r") as file:
-        for line in file:
-            if re.search(f'{species}$', line):
-                rel_abnd = float(line.split('\t')[0].lstrip().split(' ')[0])
-                break
+    try:
+        with open(kraken_report, "r") as file:
+            for line in file:
+                if re.search(f'{species}$', line):
+                    rel_abnd = float(line.split('\t')[0].lstrip().split(' ')[0])
+                    break
+
+    except:
+        print("Kraken report does not exist.")
 
     return rel_abnd
 
 
-def write_qc_status(lane_id, threshold, rel_abnd, headers, output_file):
+def get_relative_abundance(file_dest, lane_ids, species):
+    """Get the relative abundance for a species from the kraken report"""
+
+    lane_ids_rel_abnds = []
+    for lane_id in lane_ids:
+        kraken_report = [f'{dest}/kraken.report' for dest in file_dest if f'/{lane_id}/' in f'{dest}/kraken.report']
+        if kraken_report:
+            rel_abnd = search_rel_abund(kraken_report[0], species)
+        else:
+            rel_abnd = None
+
+        lane_ids_rel_abnds.append((lane_id, rel_abnd))
+
+    return lane_ids_rel_abnds
+
+
+def write_qc_status(lane_ids_rel_abnds, threshold, headers, output_file):
+
     headers.insert(0, 'lane_id')
     df = pd.DataFrame(columns=headers, index = [0])
-    df.loc[0, headers[0]] = lane_id
-    df.loc[0, headers[1]] = rel_abnd
 
-    if rel_abnd is not None:
-        if rel_abnd > threshold:
-            df.loc[0, headers[2]] = "PASS"
-        else:
-            df.loc[0, headers[2]] = "FAIL"
+    for ind, lane_id_rel_abnd in enumerate(lane_ids_rel_abnds):
+        rel_abnd = lane_id_rel_abnd[1]
+        df.loc[ind, headers[0]] = lane_id_rel_abnd[0]
+        df.loc[ind, headers[1]] = rel_abnd
+
+        if rel_abnd is not None:
+            if rel_abnd > threshold:
+                df.loc[ind, headers[2]] = "PASS"
+            else:
+                df.loc[ind, headers[2]] = "FAIL"
 
     df.to_csv(output_file, sep = '\t', index = False)
 
 
+def get_items(input_file):
+
+    list_of_items = []
+    with open(input_file, "r") as file:
+        for line in file:
+            list_of_items.append(line.split('\n')[0])
+
+    return list_of_items
+
+
 def get_arguments():
     parser = argparse.ArgumentParser(description="Get species' relative abundance from kraken report")
-    parser.add_argument("-l", "--lane_id", required=True, type=str,
-                        help="Lane id")
-    parser.add_argument("-k", "--kraken_report", required=True, type=str,
-                        help="Kraken report file")
+    parser.add_argument("-l", "--lane_ids", required=True, type=str,
+                        help="Text file of lane ids.")
+    parser.add_argument("-d", "--file_dest", required=True, type=str,
+                        help="Desinations for kraken report files.")
     parser.add_argument("-s", "--species", required=True, type=str,
                         help="Species name, e.g. 'Streptococcus agalactiae' or 'Streptococcus pneumoniae'")
     parser.add_argument("-t", "--threshold", required=True, type=float,
@@ -52,19 +85,26 @@ def get_arguments():
     return parser
 
 
-def main():
-    parser = get_arguments()
-    args = parser.parse_args()
+def main(args):
+    # Get lane ids
+    lane_ids = get_items(args.lane_ids)
+    print(lane_ids)
+
+    # Get file destinations
+    file_dest = get_items(args.file_dest)
+    print(file_dest)
 
     # Get column headers from headers json
     header_dict = read_header_json(args.headers)
 
     # Get relative abundance from kraken report
-    rel_abnd = get_relative_abundance(args.kraken_report, args.species)
+    lane_ids_rel_abnds = get_relative_abundance(file_dest, lane_ids, args.species)
 
     # Write lane id, relative abundance and PASS/FAIL status in tab file
-    write_qc_status(args.lane_id, args.threshold, rel_abnd, header_dict["relative_abundance"], args.output_file)
+    write_qc_status(lane_ids_rel_abnds, args.threshold, header_dict["relative_abundance"], args.output_file)
 
 
 if __name__ == '__main__':
-    sys.exit(main())
+    parser = get_arguments()
+    args = parser.parse_args()
+    sys.exit(main(args))
