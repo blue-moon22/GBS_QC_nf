@@ -3,8 +3,8 @@
         "rel_abundance",
         "rel_abundance_status"
     ],
-    "gc_coverage": [
-        "gc_coverage",
-        "gc_coverage_status"
+    "contig_number": [
+        "contig_no",
+        "contig_no_status"
     ]
 }

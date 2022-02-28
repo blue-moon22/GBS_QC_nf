@@ -2,5 +2,9 @@
     "relative_abundance": [
         "rel_abundance",
         "rel_abundance_status"
+    ],
+    "contig_number": [
+        "contig_no",
+        "contig_no_status"
     ]
 }

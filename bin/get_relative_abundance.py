@@ -5,6 +5,7 @@ import re
 import pandas as pd
 
 from lib.get_headers import read_header_json
+from lib.get_items import get_items
 
 def search_rel_abund(kraken_report, species):
 
@@ -57,16 +58,6 @@ def write_qc_status(lane_ids_rel_abnds, threshold, headers, output_file):
     df.to_csv(output_file, sep = '\t', index = False)
 
 
-def get_items(input_file):
-
-    list_of_items = []
-    with open(input_file, "r") as file:
-        for line in file:
-            list_of_items.append(line.split('\n')[0])
-
-    return list_of_items
-
-
 def get_arguments():
     parser = argparse.ArgumentParser(description="Get species' relative abundance from kraken report")
     parser.add_argument("-l", "--lane_ids", required=True, type=str,
@@ -88,11 +79,9 @@ def get_arguments():
 def main(args):
     # Get lane ids
     lane_ids = get_items(args.lane_ids)
-    print(lane_ids)
 
     # Get file destinations
     file_dest = get_items(args.file_dest)
-    print(file_dest)
 
     # Get column headers from headers json
     header_dict = read_header_json(args.headers)

@@ -8,5 +8,12 @@ class GetHeaders(TestCase):
     def test_read_header_json(self):
         actual = read_header_json(self.TEST_HEADER_FILE)
 
-        self.assertEqual(actual, {'gc_coverage': ['gc_coverage', 'gc_coverage_status'],
-                                    'relative_abundance': ['rel_abundance', 'rel_abundance_status']})
+        self.assertEqual(actual, {
+        "contig_number": [
+            "contig_no",
+            "contig_no_status"
+        ],
+        'relative_abundance': [
+            'rel_abundance',
+            'rel_abundance_status'
+        ]})
