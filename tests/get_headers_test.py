@@ -16,4 +16,8 @@ class GetHeaders(TestCase):
         'relative_abundance': [
             'rel_abundance',
             'rel_abundance_status'
+        ],
+        "contig_gc_content": [
+            "gc_content",
+            "gc_content_status"
         ]})

@@ -11,6 +11,7 @@ include {get_file_destinations} from './modules/get_file_destinations.nf'
 include {relative_abundance} from './modules/relative_abundance.nf'
 include {number_of_contigs} from './modules/number_of_contigs.nf'
 include {collate_qc_data} from './modules/collate_qc_data.nf'
+include {contig_gc_content} from './modules/contig_gc_content.nf'
 
 // Workflow for reads QC
 workflow reads_qc {
@@ -36,7 +37,11 @@ workflow assemblies_qc {
 
     main:
     number_of_contigs(file_dest_ch, headers_ch, lanes_ch)
-    qc_report = number_of_contigs.out
+    contig_gc_content(file_dest_ch, headers_ch, lanes_ch)
+
+    number_of_contigs.out
+    .combine(contig_gc_content.out)
+    .set { qc_report }
 
     emit:
     qc_report
@@ -66,7 +71,7 @@ workflow {
 
     // Collate QC reports
     collate_qc_data(reads_qc.out.qc_report, assemblies_qc.out.qc_report)
-    
+
     results_dir = file(params.qc_reports_directory)
     results_dir.mkdir()
 
