@@ -6,5 +6,9 @@
     "contig_number": [
         "contig_no",
         "contig_no_status"
+    ],
+    "contig_gc_content": [
+        "gc_content",
+        "gc_content_status"
     ]
 }
