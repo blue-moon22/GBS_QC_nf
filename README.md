@@ -48,7 +48,7 @@ Change:
 ## Output
 You should get two tab-delimited output reports `qc_report_summary.tab` and `qc_report_complete.tab` in the `--qc_reports_directory` you specified. `qc_report_summary.tab` gives the `lane_id` and PASS/FAIL `status`. `qc_report_summary.tab` gives all the PASS/FAIL status for each QC. 
 
-#### Missing Data
+### Missing Data
 If there are empty values in  `qc_report_summary.tab` then at least one QC workflow may have failed. You can look in the `qc_report_complete.tab` to find which one. 
 
 If there are empty values for: 
