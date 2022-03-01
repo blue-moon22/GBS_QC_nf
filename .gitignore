@@ -1,10 +1,9 @@
 .ipynb_checkpoints
 __pycache__
-bin/combine_qc.py
-tests/combine_qc_test.py
 .nextflow.log*
 work
 .nextflow
 empty_kraken.report
 *.e
 *.o
+.pytest_cache
