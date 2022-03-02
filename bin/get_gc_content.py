@@ -24,7 +24,7 @@ def gc_content(contig_fasta):
                     gcount += len(re.findall("G",line))
                     tcount += len(re.findall("T",line))
 
-        gc_content_value = round((acount + gcount)*100 / float(acount + ccount + gcount + tcount), 1)
+        gc_content_value = round((ccount + gcount)*100 / float(acount + ccount + gcount + tcount), 1)
 
     except:
         print(f'${contig_fasta} does not exist.')

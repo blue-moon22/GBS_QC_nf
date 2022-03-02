@@ -18,7 +18,7 @@ process contig_gc_content {
     """
     module load ISG/python/${python_version}
 
-    contig_gc_content.py \
+    get_gc_content.py \
         --lane_ids ${lanes_file} \
         --file_dest ${file_dest} \
         --lower_threshold ${gc_content_lower_threshold} \
