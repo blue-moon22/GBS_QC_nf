@@ -1,5 +1,4 @@
 from unittest import TestCase
-from unittest.mock import patch, call
 
 import os
 from bin.get_gc_content import *
