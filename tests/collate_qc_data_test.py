@@ -1,5 +1,4 @@
 from unittest import TestCase
-from unittest.mock import patch, call
 
 import os
 
@@ -48,17 +47,17 @@ class CollateQCData(TestCase):
 
     def test_arguments(self):
         actual = get_arguments().parse_args(
-            ['--qc_reports', ['report1', 'report2'], '--output_prefix', 'output_tab_file'])
+            ['--qc_reports', 'report1', 'report2', '--output_prefix', 'output_tab_file'])
         self.assertEqual(actual, argparse.Namespace(qc_reports=['report1', 'report2'], output_prefix='output_tab_file'))
 
     def test_arguments_short_options(self):
         actual = get_arguments().parse_args(
-            ['-i', ['report1', 'report2'], '-o', 'output_tab_file'])
+            ['-i', 'report1', 'report2', '-o', 'output_tab_file'])
         self.assertEqual(actual, argparse.Namespace(qc_reports=['report1', 'report2'], output_prefix='output_tab_file'))
 
     def test_main(self):
         args = get_arguments().parse_args(
-            ['--qc_reports', [self.TEST_REL_ABND, self.TEST_CONTIG_NO], '--output_prefix', self.TEST_OUTPUT_PREFIX2])
+            ['--qc_reports', self.TEST_REL_ABND, self.TEST_CONTIG_NO, '--output_prefix', self.TEST_OUTPUT_PREFIX2])
 
         main(args)
 

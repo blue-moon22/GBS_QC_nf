@@ -2,7 +2,7 @@ process collate_qc_data {
 
     input:
     path read_qc_report
-    path assembly_qc_report
+    tuple file(number_of_contigs), file(contig_gc_content)
 
     output:
     path("qc_report_complete.tab"), emit: complete
@@ -15,7 +15,7 @@ process collate_qc_data {
     module load ISG/python/${python_version}
 
     collate_qc_data.py \
-        --qc_reports ${read_qc_report} ${assembly_qc_report} \
+        --qc_reports ${read_qc_report} ${number_of_contigs} ${contig_gc_content} \
         --output_prefix "qc_report"
     """
 }
