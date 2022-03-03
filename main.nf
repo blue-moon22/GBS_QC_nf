@@ -12,6 +12,7 @@ include {relative_abundance} from './modules/relative_abundance.nf'
 include {number_of_contigs} from './modules/number_of_contigs.nf'
 include {collate_qc_data} from './modules/collate_qc_data.nf'
 include {contig_gc_content} from './modules/contig_gc_content.nf'
+include {genome_length} from './modules/genome_length.nf'
 
 // Workflow for reads QC
 workflow reads_qc {
@@ -38,9 +39,11 @@ workflow assemblies_qc {
     main:
     number_of_contigs(file_dest_ch, headers_ch, lanes_ch)
     contig_gc_content(file_dest_ch, headers_ch, lanes_ch)
+    genome_length(file_dest_ch, headers_ch, lanes_ch)
 
     number_of_contigs.out
     .combine(contig_gc_content.out)
+    .combine(genome_length.out)
     .set { qc_report }
 
     emit:

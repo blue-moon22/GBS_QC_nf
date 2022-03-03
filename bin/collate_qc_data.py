@@ -45,7 +45,7 @@ def write_complete_qc_report(all_reports, output_prefix):
         else:
             tmp_df = pd.read_csv(report, sep = '\t')
             df = df.merge(tmp_df, how = 'inner', on='lane_id')
-
+    
     df.to_csv(f'{output_prefix}_complete.tab', sep = '\t', index = False)
 
 
