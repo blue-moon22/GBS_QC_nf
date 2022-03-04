@@ -20,4 +20,8 @@ class GetHeaders(TestCase):
         "contig_gc_content": [
             "gc_content",
             "gc_content_status"
+        ],
+        "genome_length": [
+            "genome_len",
+            "genome_len_status"
         ]})

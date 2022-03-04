@@ -7,58 +7,49 @@ import pandas as pd
 from lib.get_headers import read_header_json
 from lib.get_items import get_items
 
-def gc_content(contig_fasta):
+def count_nucl(contig_fasta):
 
-    acount = 0
-    ccount = 0
-    gcount = 0
-    tcount = 0
-
-    gc_content_value = None
+    nucl_no = None
     try:
         with open(contig_fasta, "r") as file:
+            nucl_no = 0
             for line in file:
                 if line[0] != '>':
-                    acount += len(re.findall("A",line))
-                    ccount += len(re.findall("C",line))
-                    gcount += len(re.findall("G",line))
-                    tcount += len(re.findall("T",line))
-
-        gc_content_value = round((ccount + gcount)*100 / float(acount + ccount + gcount + tcount), 1)
+                    nucl_no += len(line.split('\n')[0])
 
     except:
         print(f'${contig_fasta} does not exist.')
 
-    return gc_content_value
+    return nucl_no
 
 
-def get_gc_content(file_dest, lane_ids, assembler):
+def get_genome_length(file_dest, lane_ids, assembler):
 
-    lane_ids_gc_content = []
+    lane_ids_nucl_no = []
     for lane_id in lane_ids:
         contig_fasta = [f'{dest}/{assembler}_assembly/contigs.fa' for dest in file_dest if f'/{lane_id}/' in f'{dest}/{assembler}_assembly/contigs.fa']
         if contig_fasta:
-            gc_content_value = gc_content(contig_fasta[0])
+            nucl_no_value = count_nucl(contig_fasta[0])
         else:
-            gc_content_value = None
+            nucl_no_value = None
 
-        lane_ids_gc_content.append((lane_id, gc_content_value))
+        lane_ids_nucl_no.append((lane_id, nucl_no_value))
 
-    return lane_ids_gc_content
+    return lane_ids_nucl_no
 
 
-def write_qc_status(lane_ids_gc_content, lower_threshold, higher_threshold, headers, output_file):
+def write_qc_status(lane_ids_nucl_no, lower_threshold, higher_threshold, headers, output_file):
 
     headers.insert(0, 'lane_id')
     df = pd.DataFrame(columns=headers, index = [0])
 
-    for ind, lane_id_gc_content in enumerate(lane_ids_gc_content):
-        contig_no = lane_id_gc_content[1]
-        df.loc[ind, headers[0]] = lane_id_gc_content[0]
-        df.loc[ind, headers[1]] = contig_no
+    for ind, lane_id_nucl_no in enumerate(lane_ids_nucl_no):
+        nucl_no = lane_id_nucl_no[1]
+        df.loc[ind, headers[0]] = lane_id_nucl_no[0]
+        df.loc[ind, headers[1]] = nucl_no
 
-        if contig_no is not None:
-            if contig_no >= lower_threshold and contig_no <= higher_threshold:
+        if nucl_no is not None:
+            if nucl_no > lower_threshold and nucl_no < higher_threshold:
                 df.loc[ind, headers[2]] = "PASS"
             else:
                 df.loc[ind, headers[2]] = "FAIL"
@@ -67,7 +58,7 @@ def write_qc_status(lane_ids_gc_content, lower_threshold, higher_threshold, head
 
 
 def get_arguments():
-    parser = argparse.ArgumentParser(description="Get GC content from contigs FASTA.")
+    parser = argparse.ArgumentParser(description="Get length of genome from contigs FASTA.")
     parser.add_argument("-l", "--lane_ids", required=True, type=str,
                         help="Text file of lane ids.")
     parser.add_argument("-d", "--file_dest", required=True, type=str,
@@ -75,9 +66,9 @@ def get_arguments():
     parser.add_argument("-a", "--assembler", required=True, type=str,
                         help="Assembler, e.g. velvet or spades")
     parser.add_argument("-lt", "--lower_threshold", required=True, type=int,
-                        help="QC PASS/FAIL lower threshold for gc content i.e. the number of contigs must be GREATER THAN OR EQUAL to lower threshold to PASS.")
+                        help="QC PASS/FAIL lower threshold for genome length i.e. the genome length must be GREATER THAN lower threshold to PASS.")
     parser.add_argument("-ht", "--higher_threshold", required=True, type=int,
-                        help="QC PASS/FAIL higher threshold for gc content i.e. the number of contigs must be LESS THAN OR EQUAL to higher threshold to PASS.")
+                        help="QC PASS/FAIL higher threshold for genome length i.e. the genome length must be LESS THAN higher threshold to PASS.")
     parser.add_argument("-j", "--headers", required=True, type=str,
                         help="JSON of headers for QC report.")
     parser.add_argument("-o", "--output_file", required=True, type=str,
@@ -96,11 +87,11 @@ def main(args):
     # Get column headers from headers json
     header_dict = read_header_json(args.headers)
 
-    # Get GC content from contigs
-    lane_ids_gc_content = get_gc_content(file_dest, lane_ids, args.assembler)
+    # Get genome length from contigs
+    lane_ids_nucl_no = get_genome_length(file_dest, lane_ids, args.assembler)
 
-    # Write lane id, GC content and PASS/FAIL status in tab file
-    write_qc_status(lane_ids_gc_content, args.lower_threshold, args.higher_threshold, header_dict["contig_gc_content"], args.output_file)
+    # Write lane id, genome length and PASS/FAIL status in tab file
+    write_qc_status(lane_ids_nucl_no, args.lower_threshold, args.higher_threshold, header_dict["genome_length"], args.output_file)
 
 
 if __name__ == '__main__':

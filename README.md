@@ -25,7 +25,7 @@ module load nextflow/20.10.0-5430
 
 3. Run QC analysis using bsub:
 ```bash
-bsub -G team284 -o gbs_qc.o -e gbs_qc.e -R"select[mem>4000] rusage[mem=4000]" -M4000 'nextflow run main.nf --qc_reports_directory /path/to/gbs_qc_reports --lanes /path/to/gbs_lanes.txt'
+bsub -G team284 -o gbs_qc.o -e gbs_qc.e -R"select[mem>4000] rusage[mem=4000]" -M4000 'nextflow run main.nf --qc_reports_directory /path/to/gbs_qc_reports --lanes /path/to/gbs_lanes.txt -resume'
 ```
 Change:
 - `/path/to/gbs_lanes.txt` to the file location of your list of lanes (that are imported and can be accessed via `pf`), e.g.
@@ -58,10 +58,14 @@ If there are empty values for:
 If this is the case contact `path-help@sanger.ac.uk` for help with this.
 
 ## Additional options
-    --rel_abund_threshold     Pass read QC if rel_abundance is > rel_abund_threshold. (Default: 70)
-    --species                 Species of interest. (Default: 'Streptococcus agalactiae')
-    --contig_no_threshold     Pass contig number QC if contig_no < contig_no_threshold. (Default: 500)
-    --assembler               Assemblies of interest e.g. velvet or spades. (Default: spades)
+    --rel_abund_threshold           Pass read QC if rel_abundance is > rel_abund_threshold. (Default: 70)
+    --species                       Species of interest. (Default: 'Streptococcus agalactiae')
+    --contig_no_threshold           Pass contig number QC if contig_no < contig_no_threshold. (Default: 500)
+    --assembler                     Assemblies of interest e.g. velvet or spades. (Default: spades)
+    --gc_content_lower_threshold    QC content must be >= gc_content_lower_threshold to pass. (Default: 32)
+    --gc_content_higher_threshold   QC content must be <= gc_content_higher_threshold to pass. (Default: 38)
+    --genome_len_lower_threshold    Genome length/total number of bases > genome_len_lower_threshold to pass. (Default: 290000)
+    --genome_len_higher_threshold   Genome length/total number of bases < genome_len_higher_threshold to pass. (Default: 1450000)
 
 ### For developers
 
