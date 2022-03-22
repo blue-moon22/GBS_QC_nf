@@ -66,6 +66,17 @@ workflow {
     }
 
     headers_ch = Channel.fromPath( params.headers, checkIfExists: true )
+
+    // Create results directory
+    results_dir = file(params.qc_reports_directory)
+    if (!results_dir.exists()) {
+        dir_out = results_dir.mkdir()
+        if (!dir_out) {
+            println("Cannot create qc_results_directory: $results_dir Check the parent directory exists.")
+            System.exit(1)
+        }
+    }
+
     // Run reads QC
     reads_qc(get_file_destinations.out, headers_ch, lanes_ch)
 
@@ -74,9 +85,6 @@ workflow {
 
     // Collate QC reports
     collate_qc_data(reads_qc.out.qc_report, assemblies_qc.out.qc_report)
-
-    results_dir = file(params.qc_reports_directory)
-    results_dir.mkdir()
 
     collate_qc_data.out.complete
     .subscribe { it -> it.copyTo(results_dir) }
