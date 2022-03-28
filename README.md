@@ -1,3 +1,8 @@
+<!-- badges: start -->
+[![pytest check](https://github.com/sanger-bentley-group/GBS_QC_nf/workflows/pytests_check/badge.svg)](https://github.com/sanger-bentley-group/GBS_QC_nf/actions)
+<!-- [![DOI](https://zenodo.org/badge/137083307.svg)](https://zenodo.org/badge/latestdoi/137083307) -->
+<!-- badges: end -->
+
 # GBS QC Nextflow Pipeline for farm5
 
 ## About
