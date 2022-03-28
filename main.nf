@@ -15,6 +15,7 @@ include {contig_gc_content} from './modules/contig_gc_content.nf'
 include {genome_length} from './modules/genome_length.nf'
 include {get_qc_stats_from_pf} from './modules/get_qc_stats_from_pf.nf'
 include {depth_of_coverage} from './modules/depth_of_coverage.nf'
+include {breadth_of_coverage} from './modules/breadth_of_coverage.nf'
 
 // Workflow for reads QC
 workflow reads_qc {
@@ -44,11 +45,13 @@ workflow assemblies_qc {
     contig_gc_content(file_dest_ch, headers_ch, lanes_ch)
     genome_length(file_dest_ch, headers_ch, lanes_ch)
     depth_of_coverage(qc_stats_ch, headers_ch, lanes_ch)
+    breadth_of_coverage(qc_stats_ch, headers_ch, lanes_ch)
 
     number_of_contigs.out
     .combine(contig_gc_content.out)
     .combine(genome_length.out)
     .combine(depth_of_coverage.out)
+    .combine(breadth_of_coverage.out)
     .set { qc_report }
 
     emit:

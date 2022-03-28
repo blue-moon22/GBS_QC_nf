@@ -67,6 +67,7 @@ If this is the case contact `path-help@sanger.ac.uk` for help with this.
     --genome_len_lower_threshold    Genome length/total number of bases > genome_len_lower_threshold to pass. (Default: 1450000)
     --genome_len_higher_threshold   Genome length/total number of bases < genome_len_higher_threshold to pass. (Default: 2800000)
     --cov_depth_threshold           Genome depth of coverage > cov_depth_threshold to pass. (Default: 20)
+    --cov_breadth_threshold         Genome breadth of coverage > cov_breadth_threshold to pass. (Default: 70)
 
 ### For developers
 

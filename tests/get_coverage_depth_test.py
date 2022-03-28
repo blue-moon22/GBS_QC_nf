@@ -3,7 +3,7 @@ from unittest import TestCase
 import os
 from bin.get_coverage_depth import *
 
-class GetNoContigs(TestCase):
+class GetCoverageDepth(TestCase):
     TEST_DATA_DIR = 'tests/test_data'
     TEST_PF_STATS = f'{TEST_DATA_DIR}/test.txt.pathfind_stats.csv'
     TEST_OUTPUT_FILE = f'tests/test_data/depth_of_coverage.tab'
