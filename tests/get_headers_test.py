@@ -32,4 +32,8 @@ class GetHeaders(TestCase):
         "coverage_breadth": [
             "cov_breadth",
             "cov_breadth_status"
+        ],
+        "percentage_het_snps": [
+            "%_HET_SNPs",
+            "%_HET_SNPs_status"
         ]})
