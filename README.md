@@ -46,12 +46,12 @@ Change:
 - `/path/to/gbs_qc_reports` to the directory location of the generated reports. (Default is the current directory)
 
 ## Output
-You should get two tab-delimited output reports `qc_report_summary.tab` and `qc_report_complete.tab` in the `--qc_reports_directory` you specified. `qc_report_summary.tab` gives the `lane_id` and PASS/FAIL `status`. `qc_report_summary.tab` gives all the PASS/FAIL status for each QC. 
+You should get two tab-delimited output reports `qc_report_summary.tab` and `qc_report_complete.tab` in the `--qc_reports_directory` you specified. `qc_report_summary.tab` gives the `lane_id` and PASS/FAIL `status`. `qc_report_summary.tab` gives all the PASS/FAIL status for each QC.
 
 ### Missing Data
-If there are empty values in  `qc_report_summary.tab` then at least one QC workflow may have failed. You can look in the `qc_report_complete.tab` to find which one. 
+If there are empty values in  `qc_report_summary.tab` then at least one QC workflow may have failed. You can look in the `qc_report_complete.tab` to find which one.
 
-If there are empty values for: 
+If there are empty values for:
 - `rel_abundance` then these lanes may not have been imported/imported properly with a kraken report.
 - `contig_no` then these lanes may not have been assembled/assembled properly
 
@@ -64,8 +64,9 @@ If this is the case contact `path-help@sanger.ac.uk` for help with this.
     --assembler                     Assemblies of interest e.g. velvet or spades. (Default: spades)
     --gc_content_lower_threshold    QC content must be >= gc_content_lower_threshold to pass. (Default: 32)
     --gc_content_higher_threshold   QC content must be <= gc_content_higher_threshold to pass. (Default: 38)
-    --genome_len_lower_threshold    Genome length/total number of bases > genome_len_lower_threshold to pass. (Default: 290000)
-    --genome_len_higher_threshold   Genome length/total number of bases < genome_len_higher_threshold to pass. (Default: 1450000)
+    --genome_len_lower_threshold    Genome length/total number of bases > genome_len_lower_threshold to pass. (Default: 1450000)
+    --genome_len_higher_threshold   Genome length/total number of bases < genome_len_higher_threshold to pass. (Default: 2800000)
+    --cov_depth_threshold           Genome depth of coverage > cov_depth_threshold to pass. (Default: 20)
 
 ### For developers
 

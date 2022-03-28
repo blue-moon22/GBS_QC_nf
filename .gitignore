@@ -7,3 +7,4 @@ empty_kraken.report
 *.e
 *.o
 .pytest_cache
+.DS_Store

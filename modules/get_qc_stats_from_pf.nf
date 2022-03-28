@@ -1,4 +1,4 @@
-process get_file_destinations {
+process get_qc_stats_from_pf {
 
     input:
     path lanes_file
@@ -8,12 +8,12 @@ process get_file_destinations {
 
     script:
     pf_version=params.pf_version
-    output_file="file_dest.txt"
+    output_file="${lanes_file}.pathfind_stats.csv"
 
     """
     #!/bin/bash
 
     module load pf/${pf_version}
-    pf data -t file -i ${lanes_file} > ${output_file}
+    pf data -s -t file -i ${lanes_file}
     """
 }
