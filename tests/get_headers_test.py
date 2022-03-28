@@ -24,4 +24,8 @@ class GetHeaders(TestCase):
         "genome_length": [
             "genome_len",
             "genome_len_status"
+        ],
+        "coverage_depth": [
+            "cov_depth",
+            "cov_depth_status"
         ]})
