@@ -2,7 +2,14 @@
 
 ## About
 
-This pipeline runs QC for lanes of Group B Strep sequences that are imported on farm5 and available on `pf`.
+This pipeline runs QC for lanes of Group B Strep (GBS) sequences that are imported on farm5 and available on `pf`. The QC includes:
+- Relative abundance of GBS reads from Kraken
+- Number of contigs
+- GC content
+- Genome length
+- Coverage breadth
+- Coverage depth
+- Percentage HET SNPs out of total SNPs
 
 ## Installation
 
@@ -68,10 +75,20 @@ If this is the case contact `path-help@sanger.ac.uk` for help with this.
     --genome_len_higher_threshold   Genome length/total number of bases < genome_len_higher_threshold to pass. (Default: 2800000)
     --cov_depth_threshold           Genome depth of coverage > cov_depth_threshold to pass. (Default: 20)
     --cov_breadth_threshold         Genome breadth of coverage > cov_breadth_threshold to pass. (Default: 70)
+    --percentage_het_snps_threshold Percentage of HET SNPs (of total SNPs) < percentage_het_snps_threshold to pass. (Default: 15)
+
+## The methods
+The methods used for finding relative abundance from Kraken, coverage breadth, coverage depth and percentage HET SNPs out of total SNPs are described [here](http://mediawiki.internal.sanger.ac.uk/index.php/Pathogen_Informatics_QC_Pipeline) (Sanger access only).
 
 ### For developers
 
-Run tests:
+To run Python unit tests:
 ```
 pytest tests
+```
+
+To test this pipeline on the farm:
+```
+module load nextflow/20.10.0-5430
+bsub -G <YOUR GROUP> -o gbs_qc.o -e gbs_qc.e -R"select[mem>4000] rusage[mem=4000]" -M4000 'nextflow run main.nf --qc_reports_directory gbs_qc_report --lanes test_data/test_lanes.txt'
 ```
