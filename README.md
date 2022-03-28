@@ -64,8 +64,8 @@ If this is the case contact `path-help@sanger.ac.uk` for help with this.
     --assembler                     Assemblies of interest e.g. velvet or spades. (Default: spades)
     --gc_content_lower_threshold    QC content must be >= gc_content_lower_threshold to pass. (Default: 32)
     --gc_content_higher_threshold   QC content must be <= gc_content_higher_threshold to pass. (Default: 38)
-    --genome_len_lower_threshold    Genome length/total number of bases > genome_len_lower_threshold to pass. (Default: 290000)
-    --genome_len_higher_threshold   Genome length/total number of bases < genome_len_higher_threshold to pass. (Default: 1450000)
+    --genome_len_lower_threshold    Genome length/total number of bases > genome_len_lower_threshold to pass. (Default: 1450000)
+    --genome_len_higher_threshold   Genome length/total number of bases < genome_len_higher_threshold to pass. (Default: 2800000)
     --cov_depth_threshold           Genome depth of coverage > cov_depth_threshold to pass. (Default: 20)
 
 ### For developers
