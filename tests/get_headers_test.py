@@ -28,4 +28,8 @@ class GetHeaders(TestCase):
         "coverage_depth": [
             "cov_depth",
             "cov_depth_status"
+        ],
+        "coverage_breadth": [
+            "cov_breadth",
+            "cov_breadth_status"
         ]})
