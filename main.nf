@@ -47,7 +47,7 @@ workflow assemblies_qc {
     genome_length(file_dest_ch, headers_ch, lanes_ch)
     depth_of_coverage(qc_stats_ch, headers_ch, lanes_ch)
     breadth_of_coverage(qc_stats_ch, headers_ch, lanes_ch)
-    percentage_HET_SNPs(qc_stats_ch, headers_ch, lanes_ch)
+    percentage_HET_SNPs(lanes_ch)
 
     number_of_contigs.out
     .combine(contig_gc_content.out)
