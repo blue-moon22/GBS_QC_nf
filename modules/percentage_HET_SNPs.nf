@@ -7,6 +7,8 @@ process percentage_HET_SNPs {
     path "${output_file}"
 
     script:
+    pf_version=params.pf_version
+    output_file="all_stats.tar"
     """
     #!/bin/bash
 
@@ -27,5 +29,6 @@ process percentage_HET_SNPs {
             filtervcf_v4.py tmp.vcf \${lane} 50
         fi
     done
+    tar -cf ${output_file} *stats
     """
 }
