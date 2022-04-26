@@ -33,7 +33,7 @@ class GetHeaders(TestCase):
             "cov_breadth",
             "cov_breadth_status"
         ],
-        "percentage_het_snps": [
-            "%_HET_SNPs",
-            "%_HET_SNPs_status"
+        "het_snps": [
+            "HET_SNPs",
+            "HET_SNPs_status"
         ]})

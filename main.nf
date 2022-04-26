@@ -17,6 +17,7 @@ include {get_qc_stats_from_pf} from './modules/get_qc_stats_from_pf.nf'
 include {depth_of_coverage} from './modules/depth_of_coverage.nf'
 include {breadth_of_coverage} from './modules/breadth_of_coverage.nf'
 include {get_proportion_HET_SNPs} from './modules/get_proportion_HET_SNPs.nf'
+include {HET_SNPs} from './modules/HET_SNPs.nf'
 
 // Workflow for reads QC
 workflow reads_qc {
@@ -38,6 +39,7 @@ workflow assemblies_qc {
     take:
     file_dest_ch
     qc_stats_ch
+    het_stats_ch
     headers_ch
     lanes_ch
 
@@ -47,13 +49,14 @@ workflow assemblies_qc {
     genome_length(file_dest_ch, headers_ch, lanes_ch)
     depth_of_coverage(qc_stats_ch, headers_ch, lanes_ch)
     breadth_of_coverage(qc_stats_ch, headers_ch, lanes_ch)
-    get_proportion_HET_SNPs(lanes_ch)
+    HET_SNPs(het_stats_ch, headers_ch, lanes_ch)
 
     number_of_contigs.out
     .combine(contig_gc_content.out)
     .combine(genome_length.out)
     .combine(depth_of_coverage.out)
     .combine(breadth_of_coverage.out)
+    .combine(HET_SNPs.out)
     .set { qc_report }
 
     emit:
@@ -70,6 +73,7 @@ workflow {
         lanes_ch = Channel.fromPath( params.lanes, checkIfExists: true )
         get_file_destinations(lanes_ch)
         get_qc_stats_from_pf(lanes_ch)
+        get_proportion_HET_SNPs(lanes_ch)
 
     } else {
         println("Error: You must specify a text file of lanes as --lanes <file with list of lanes>")
@@ -92,7 +96,7 @@ workflow {
     reads_qc(get_file_destinations.out, headers_ch, lanes_ch)
 
     // Run assembly QC
-    assemblies_qc(get_file_destinations.out, get_qc_stats_from_pf.out, headers_ch, lanes_ch)
+    assemblies_qc(get_file_destinations.out, get_qc_stats_from_pf.out, get_proportion_HET_SNPs.out, headers_ch, lanes_ch)
 
     // Collate QC reports
     collate_qc_data(reads_qc.out.qc_report, assemblies_qc.out.qc_report)

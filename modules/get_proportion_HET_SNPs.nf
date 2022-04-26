@@ -24,6 +24,7 @@ process get_proportion_HET_SNPs {
         gunzip -c \${vcf_file} > tmp.vcf
         filtervcf_v4.py tmp.vcf \${lane} 50
     done
+    rm *.vcf
     tar -cf ${output_file} *stats
     """
 }
