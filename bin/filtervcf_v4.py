@@ -146,7 +146,7 @@ try:
     st1 = format(float(n1)/n2, ".2f")
 
 except ZeroDivisionError as err:
-    print err
+    print(err)
     st1 = 0
 
 finally:
