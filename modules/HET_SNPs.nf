@@ -14,7 +14,7 @@ process HET_SNPs {
     output_file = "het_snps.tab"
 
     """
-    tar -tvf ${het_stats}
+    tar -xf ${het_stats}
 
     module load ISG/python/${python_version}
 
