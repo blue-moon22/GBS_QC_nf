@@ -16,7 +16,7 @@ include {genome_length} from './modules/genome_length.nf'
 include {get_qc_stats_from_pf} from './modules/get_qc_stats_from_pf.nf'
 include {depth_of_coverage} from './modules/depth_of_coverage.nf'
 include {breadth_of_coverage} from './modules/breadth_of_coverage.nf'
-include {percentage_HET_SNPs} from './modules/percentage_HET_SNPs.nf'
+include {get_proportion_HET_SNPs} from './modules/get_proportion_HET_SNPs.nf'
 
 // Workflow for reads QC
 workflow reads_qc {
@@ -47,7 +47,7 @@ workflow assemblies_qc {
     genome_length(file_dest_ch, headers_ch, lanes_ch)
     depth_of_coverage(qc_stats_ch, headers_ch, lanes_ch)
     breadth_of_coverage(qc_stats_ch, headers_ch, lanes_ch)
-    percentage_HET_SNPs(lanes_ch)
+    get_proportion_HET_SNPs(lanes_ch)
 
     number_of_contigs.out
     .combine(contig_gc_content.out)
