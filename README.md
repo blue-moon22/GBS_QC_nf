@@ -58,14 +58,15 @@ Change:
 - `/path/to/gbs_qc_reports` to the directory location of the generated reports. (Default is the current directory)
 
 ## Output
-You should get two tab-delimited output reports `qc_report_summary.tab` and `qc_report_complete.tab` in the `--qc_reports_directory` you specified. `qc_report_summary.tab` gives the `lane_id` and PASS/FAIL `status`. `qc_report_summary.tab` gives all the PASS/FAIL status for each QC.
+You should get two tab-delimited output reports `qc_report_summary.tab` and `qc_report_complete.tab` in the `--qc_reports_directory` you specified. `qc_report_summary.tab` gives the `lane_id` and PASS/FAIL `status`. `qc_report_complete.tab` gives all the PASS/FAIL status for each QC.
 
 ### Missing Data
 If there are empty values in  `qc_report_summary.tab` then at least one QC workflow may have failed. You can look in the `qc_report_complete.tab` to find which one.
 
 If there are empty values for:
 - `rel_abundance` then these lanes may not have been imported/imported properly with a kraken report.
-- `contig_no` then these lanes may not have been assembled/assembled properly
+- `contig_no` or `gc_content` then these lanes may not have been assembled/assembled properly
+- `HET_SNPs` then these lanes may not have had variants called
 
 If this is the case contact `path-help@sanger.ac.uk` for help with this.
 
@@ -80,7 +81,7 @@ If this is the case contact `path-help@sanger.ac.uk` for help with this.
     --genome_len_higher_threshold   Genome length/total number of bases < genome_len_higher_threshold to pass. (Default: 2800000)
     --cov_depth_threshold           Genome depth of coverage > cov_depth_threshold to pass. (Default: 20)
     --cov_breadth_threshold         Genome breadth of coverage > cov_breadth_threshold to pass. (Default: 70)
-    --het_snps_threshold Percentage of HET SNPs (of total SNPs) < het_snps_threshold to pass. (Default: 15)
+    --het_snps_threshold            Number of HET SNPs <= het_snps_threshold to pass. (Default: 20)
 
 ## The methods
 The methods used for finding relative abundance from Kraken, coverage breadth, coverage depth and percentage HET SNPs out of total SNPs are described [here](http://mediawiki.internal.sanger.ac.uk/index.php/Pathogen_Informatics_QC_Pipeline) (Sanger access only).
