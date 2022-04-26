@@ -23,11 +23,8 @@ process percentage_HET_SNPs {
         lane=\$(sed -n "\${i}p" ${lanes_file})
 
         a1=\$(zcat<\${vcf_file} | awk -F'\t' 'NR==100{print \$1}')
-        if [ \$a1 == "FM211187" ]
-        then
-            gunzip -c \${vcf_file} > tmp.vcf
-            filtervcf_v4.py tmp.vcf \${lane} 50
-        fi
+        gunzip -c \${vcf_file} > tmp.vcf
+        filtervcf_v4.py tmp.vcf \${lane} 50
     done
     tar -cf ${output_file} *stats
     """
