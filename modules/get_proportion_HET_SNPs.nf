@@ -21,7 +21,7 @@ process get_proportion_HET_SNPs {
     do
         lane=\$(sed -n "\${i}p" ${lanes_file})
         vcf_file=\$(grep "/\${lane}/" vcf_files.txt)
-        if [ -f \${vcf_file} ]
+        if [ \${vcf_file} ]
         then
             gunzip -c \${vcf_file} > tmp.vcf
             filtervcf_v4.py tmp.vcf \${lane} 50
