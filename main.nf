@@ -54,7 +54,6 @@ workflow assemblies_qc {
     .combine(genome_length.out)
     .combine(depth_of_coverage.out)
     .combine(breadth_of_coverage.out)
-    .combine(percentage_HET_SNPs.out)
     .set { qc_report }
 
     emit:
