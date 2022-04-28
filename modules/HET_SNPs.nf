@@ -1,7 +1,7 @@
-process percentage_HET_SNPs {
+process HET_SNPs {
 
     input:
-    path qc_stats
+    path het_stats
     path headers
     path lanes_file
 
@@ -10,16 +10,18 @@ process percentage_HET_SNPs {
 
     script:
     python_version = params.python_version
-    percentage_het_snps_threshold = params.percentage_het_snps_threshold
-    output_file = "percentage_het_snps.tab"
+    het_snps_threshold = params.het_snps_threshold
+    output_file = "het_snps.tab"
 
     """
+    tar -xf ${het_stats}
+
     module load ISG/python/${python_version}
 
-    get_percentage_het_snps.py \
+    get_het_snps.py \
         --lane_ids ${lanes_file} \
-        --qc_stats ${qc_stats} \
-        --threshold ${percentage_het_snps_threshold} \
+        --data_dir \$(pwd) \
+        --threshold ${het_snps_threshold} \
         --headers ${headers} \
         --output_file ${output_file}
     """
