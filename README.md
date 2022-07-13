@@ -7,7 +7,7 @@
 
 ## About
 
-This pipeline runs QC for lanes of Group B Strep (GBS) sequences that are imported on farm5 and available on `pf`. The QC includes:
+This pipeline provides QC information for lanes of Group B Strep (GBS) sequences that are imported on farm5 and QC-ed, assembled and mapped on `pf`. This pipeline gives:
 - Relative abundance of GBS reads from Kraken
 - Number of contigs
 - GC content
@@ -58,10 +58,10 @@ Change:
 - `/path/to/gbs_qc_reports` to the directory location of the generated reports. (Default is the current directory)
 
 ## Output
-You should get two tab-delimited output reports `qc_report_summary.tab` and `qc_report_complete.tab` in the `--qc_reports_directory` you specified. `qc_report_summary.tab` gives the `lane_id` and PASS/FAIL `status`. `qc_report_complete.tab` gives all the PASS/FAIL status for each QC.
+You should get two tab-delimited output reports `qc_report_summary.txt` and `qc_report_complete.txt` in the `--qc_reports_directory` you specified. `qc_report_summary.txt` gives the `lane_id` and PASS/FAIL `status`. `qc_report_complete.txt` gives all the PASS/FAIL status for each QC.
 
 ### Missing Data
-If there are empty values in  `qc_report_summary.tab` then at least one QC workflow may have failed. You can look in the `qc_report_complete.tab` to find which one.
+If there are empty values in  `qc_report_summary.txt` then at least one QC workflow may have failed. You can look in the `qc_report_complete.txt` to find which one.
 
 If there are empty values for:
 - `rel_abundance` then these lanes may not have been imported/imported properly with a kraken report.
