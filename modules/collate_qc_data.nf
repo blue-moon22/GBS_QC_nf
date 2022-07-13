@@ -6,8 +6,8 @@ process collate_qc_data {
     path version
 
     output:
-    path("qc_report_complete.tab"), emit: complete
-    path("qc_report_summary.tab"), emit: summary
+    path("qc_report_complete.txg"), emit: complete
+    path("qc_report_summary.txt"), emit: summary
 
     script:
     python_version = params.python_version
