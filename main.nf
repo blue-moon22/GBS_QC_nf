@@ -18,6 +18,7 @@ include {depth_of_coverage} from './modules/depth_of_coverage.nf'
 include {breadth_of_coverage} from './modules/breadth_of_coverage.nf'
 include {get_proportion_HET_SNPs} from './modules/get_proportion_HET_SNPs.nf'
 include {HET_SNPs} from './modules/HET_SNPs.nf'
+include {get_version} from './modules/version.nf'
 
 // Workflow for reads QC
 workflow reads_qc {
@@ -98,8 +99,12 @@ workflow {
     // Run assembly QC
     assemblies_qc(get_file_destinations.out, get_qc_stats_from_pf.out, get_proportion_HET_SNPs.out, headers_ch, lanes_ch)
 
+    // Get version of pipeline
+    get_version()
+    version_ch = get_version.out
+
     // Collate QC reports
-    collate_qc_data(reads_qc.out.qc_report, assemblies_qc.out.qc_report)
+    collate_qc_data(reads_qc.out.qc_report, assemblies_qc.out.qc_report, version_ch)
 
     collate_qc_data.out.complete
     .subscribe { it -> it.copyTo(results_dir) }

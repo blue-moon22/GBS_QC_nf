@@ -1,0 +1,5 @@
+lane_id	status	rel_abundance_status	contig_no_status	version
+test_lane1	PASS	PASS	PASS	v0.0.0
+test_lane2	FAIL	FAIL	FAIL	v0.0.0
+test_lane3	FAIL	FAIL	PASS	v0.0.0
+test_lane4			FAIL	v0.0.0
