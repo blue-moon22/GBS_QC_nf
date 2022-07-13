@@ -13,7 +13,7 @@ def write_summary_qc_report(summary_qc, complete_report, output_prefix):
     summary_report['status'] = summary_qc.values()
 
     status_columns = ['lane_id']
-    status_columns.extend([column for column in complete_report.columns if 'status' in column])
+    status_columns.extend([column for column in complete_report.columns if 'status' in column or 'version' in column])
 
     summary_report = summary_report.merge(complete_report[status_columns], how = 'inner', on='lane_id')
 
@@ -41,7 +41,7 @@ def get_summary_qc(all_reports):
     return summary_qc
 
 
-def get_complete_qc_report(all_reports):
+def get_complete_qc_report(all_reports, version_file):
 
     df = pd.DataFrame()
 
@@ -52,6 +52,14 @@ def get_complete_qc_report(all_reports):
             tmp_df = pd.read_csv(report, sep = '\t')
             df = df.merge(tmp_df, how = 'inner', on='lane_id')
 
+    version = ''
+    with open(version_file, 'r') as file:
+        next(file)
+        for line in file:
+            version = line.replace("\n", "")
+
+    df['version'] = version
+
     return df
 
 
@@ -59,6 +67,8 @@ def get_arguments():
     parser = argparse.ArgumentParser(description='Collate QC data to output complete and summary reports.')
     parser.add_argument('-i', '--qc_reports', required=True, nargs='*',
                         help='All QC reports.')
+    parser.add_argument('-v', '--version', dest='version', required=True,
+                        help='Input file with version of pipeline.')
     parser.add_argument('-o', '--output_prefix', required=True, type=str,
                         help='Output prefix of QC reports.')
 
@@ -67,7 +77,7 @@ def get_arguments():
 
 def main(args):
     # Write complete report
-    complete_report = get_complete_qc_report(args.qc_reports)
+    complete_report = get_complete_qc_report(args.qc_reports, args.version)
     complete_report.to_csv(f'{args.output_prefix}_complete.txt', sep = '\t', index = False)
 
     # Get summary QC
