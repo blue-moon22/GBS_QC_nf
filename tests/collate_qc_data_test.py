@@ -14,15 +14,9 @@ class CollateQCData(TestCase):
     TEST_OUTPUT_PREFIX2 = f'{TEST_DATA_DIR}/qc_report2'
 
 
-    def test_write_complete_qc_report(self):
+    def test_get_complete_qc_report(self):
 
-        write_complete_qc_report([self.TEST_REL_ABND, self.TEST_CONTIG_NO], self.TEST_OUTPUT_PREFIX)
-
-        file = open(f'{self.TEST_OUTPUT_PREFIX}_complete.tab', "r")
-        actual = "".join(file.readlines())
-        os.remove(f'{self.TEST_OUTPUT_PREFIX}_complete.tab')
-
-        self.assertEqual(actual, """lane_id\trel_abundance\trel_abundance_status\tcontig_no\tcontig_no_status\ntest_lane1\t92.38\tPASS\t1\tPASS\ntest_lane2\t2.38\tFAIL\t500\tFAIL\ntest_lane3\t70.0\tFAIL\t3\tPASS\ntest_lane4\t\t\t501\tFAIL\n""")
+        get_complete_qc_report([self.TEST_REL_ABND, self.TEST_CONTIG_NO])
 
     def test_get_summary_qc(self):
 
@@ -37,23 +31,19 @@ class CollateQCData(TestCase):
         summary_qc['test_lane3'] = 'FAIL'
         summary_qc['test_lane4'] = ''
 
-        write_summary_qc_report(summary_qc, self.TEST_OUTPUT_PREFIX)
+        complete_report = get_complete_qc_report([self.TEST_REL_ABND, self.TEST_CONTIG_NO])
 
-        file = open(f'{self.TEST_OUTPUT_PREFIX}_summary.tab', "r")
-        actual = "".join(file.readlines())
-        os.remove(f'{self.TEST_OUTPUT_PREFIX}_summary.tab')
-
-        self.assertEqual(actual, """lane_id\tstatus\ntest_lane1\tPASS\ntest_lane2\tFAIL\ntest_lane3\tFAIL\ntest_lane4\t\n""")
+        write_summary_qc_report(summary_qc, complete_report, self.TEST_OUTPUT_PREFIX)
 
     def test_arguments(self):
         actual = get_arguments().parse_args(
-            ['--qc_reports', 'report1', 'report2', '--output_prefix', 'output_tab_file'])
-        self.assertEqual(actual, argparse.Namespace(qc_reports=['report1', 'report2'], output_prefix='output_tab_file'))
+            ['--qc_reports', 'report1', 'report2', '--output_prefix', 'output_txt_file'])
+        self.assertEqual(actual, argparse.Namespace(qc_reports=['report1', 'report2'], output_prefix='output_txt_file'))
 
     def test_arguments_short_options(self):
         actual = get_arguments().parse_args(
-            ['-i', 'report1', 'report2', '-o', 'output_tab_file'])
-        self.assertEqual(actual, argparse.Namespace(qc_reports=['report1', 'report2'], output_prefix='output_tab_file'))
+            ['-i', 'report1', 'report2', '-o', 'output_txt_file'])
+        self.assertEqual(actual, argparse.Namespace(qc_reports=['report1', 'report2'], output_prefix='output_txt_file'))
 
     def test_main(self):
         args = get_arguments().parse_args(
@@ -61,14 +51,14 @@ class CollateQCData(TestCase):
 
         main(args)
 
-        file = open(f'{self.TEST_OUTPUT_PREFIX2}_summary.tab', "r")
+        file = open(f'{self.TEST_OUTPUT_PREFIX2}_summary.txt', "r")
         actual = "".join(file.readlines())
-        os.remove(f'{self.TEST_OUTPUT_PREFIX2}_summary.tab')
+        os.remove(f'{self.TEST_OUTPUT_PREFIX2}_summary.txt')
 
-        self.assertEqual(actual, """lane_id\tstatus\ntest_lane1\tPASS\ntest_lane2\tFAIL\ntest_lane3\tFAIL\ntest_lane4\t\n""")
+        self.assertEqual(actual, """lane_id\tstatus\trel_abundance_status\tcontig_no_status\ntest_lane1\tPASS\tPASS\tPASS\ntest_lane2\tFAIL\tFAIL\tFAIL\ntest_lane3\tFAIL\tFAIL\tPASS\ntest_lane4\t\t\tFAIL\n""")
 
-        file = open(f'{self.TEST_OUTPUT_PREFIX2}_complete.tab', "r")
+        file = open(f'{self.TEST_OUTPUT_PREFIX2}_complete.txt', "r")
         actual = "".join(file.readlines())
-        os.remove(f'{self.TEST_OUTPUT_PREFIX2}_complete.tab')
+        os.remove(f'{self.TEST_OUTPUT_PREFIX2}_complete.txt')
 
         self.assertEqual(actual, """lane_id\trel_abundance\trel_abundance_status\tcontig_no\tcontig_no_status\ntest_lane1\t92.38\tPASS\t1\tPASS\ntest_lane2\t2.38\tFAIL\t500\tFAIL\ntest_lane3\t70.0\tFAIL\t3\tPASS\ntest_lane4\t\t\t501\tFAIL\n""")

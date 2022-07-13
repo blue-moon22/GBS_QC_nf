@@ -6,12 +6,18 @@ import pandas as pd
 from collections import defaultdict
 
 
-def write_summary_qc_report(summary_qc, output_prefix):
+def write_summary_qc_report(summary_qc, complete_report, output_prefix):
 
-    with open(f'{output_prefix}_summary.tab', 'w') as out:
-        out.write('lane_id\tstatus\n')
-        for lane_id, status in summary_qc.items():
-            out.write(f'{lane_id}\t{status}\n')
+    summary_report = pd.DataFrame()
+    summary_report['lane_id'] = summary_qc.keys()
+    summary_report['status'] = summary_qc.values()
+
+    status_columns = ['lane_id']
+    status_columns.extend([column for column in complete_report.columns if 'status' in column])
+
+    summary_report = summary_report.merge(complete_report[status_columns], how = 'inner', on='lane_id')
+
+    summary_report.to_csv(f'{output_prefix}_summary.txt', sep = '\t', index = False)
 
 
 def get_summary_qc(all_reports):
@@ -35,7 +41,7 @@ def get_summary_qc(all_reports):
     return summary_qc
 
 
-def write_complete_qc_report(all_reports, output_prefix):
+def get_complete_qc_report(all_reports):
 
     df = pd.DataFrame()
 
@@ -45,8 +51,8 @@ def write_complete_qc_report(all_reports, output_prefix):
         else:
             tmp_df = pd.read_csv(report, sep = '\t')
             df = df.merge(tmp_df, how = 'inner', on='lane_id')
-    
-    df.to_csv(f'{output_prefix}_complete.tab', sep = '\t', index = False)
+
+    return df
 
 
 def get_arguments():
@@ -61,13 +67,14 @@ def get_arguments():
 
 def main(args):
     # Write complete report
-    write_complete_qc_report(args.qc_reports, args.output_prefix)
+    complete_report = get_complete_qc_report(args.qc_reports)
+    complete_report.to_csv(f'{args.output_prefix}_complete.txt', sep = '\t', index = False)
 
     # Get summary QC
     summary_qc = get_summary_qc(args.qc_reports)
 
     # Write summary QC
-    write_summary_qc_report(summary_qc, args.output_prefix)
+    write_summary_qc_report(summary_qc, complete_report, args.output_prefix)
 
 
 if __name__ == '__main__':
