@@ -13,7 +13,7 @@ class CollateQCData(TestCase):
     TEST_CONTIG_NO = f'{TEST_DATA_DIR}/test_contig_number.tab'
     TEST_OUTPUT_PREFIX = f'{TEST_DATA_DIR}/qc_report'
     TEST_OUTPUT_PREFIX2 = f'{TEST_DATA_DIR}/qc_report2'
-    TEST_VERSION = f'{TEST_DATA_DIR}/version.txt'
+    TEST_VERSION = f'{TEST_DATA_DIR}/test_version.txt'
 
 
     def test_get_complete_qc_report(self):
@@ -43,6 +43,13 @@ class CollateQCData(TestCase):
 
         write_summary_qc_report(summary_qc, complete_report, self.TEST_OUTPUT_PREFIX)
 
+        file = open(f'{self.TEST_OUTPUT_PREFIX}_summary.txt', "r")
+        actual = "".join(file.readlines())
+        os.remove(f'{self.TEST_OUTPUT_PREFIX}_summary.txt')
+
+        self.assertEqual(actual, """lane_id\tstatus\trel_abundance_status\tcontig_no_status\tQC_pipeline_version\ntest_lane1\tPASS\tPASS\tPASS\tv0.0.0\ntest_lane2\tFAIL\tFAIL\tFAIL\tv0.0.0\ntest_lane3\tFAIL\tFAIL\tPASS\tv0.0.0\ntest_lane4\t\t\tFAIL\tv0.0.0\n""")
+
+
     def test_arguments(self):
         actual = get_arguments().parse_args(
             ['--qc_reports', 'report1', 'report2', '--version', 'version', '--output_prefix', 'output_txt_file'])
@@ -63,10 +70,10 @@ class CollateQCData(TestCase):
         actual = "".join(file.readlines())
         os.remove(f'{self.TEST_OUTPUT_PREFIX2}_summary.txt')
 
-        self.assertEqual(actual, """lane_id\tstatus\trel_abundance_status\tcontig_no_status\tversion\ntest_lane1\tPASS\tPASS\tPASS\tv0.0.0\ntest_lane2\tFAIL\tFAIL\tFAIL\tv0.0.0\ntest_lane3\tFAIL\tFAIL\tPASS\tv0.0.0\ntest_lane4\t\t\tFAIL\tv0.0.0\n""")
+        self.assertEqual(actual, """lane_id\tstatus\trel_abundance_status\tcontig_no_status\tQC_pipeline_version\ntest_lane1\tPASS\tPASS\tPASS\tv0.0.0\ntest_lane2\tFAIL\tFAIL\tFAIL\tv0.0.0\ntest_lane3\tFAIL\tFAIL\tPASS\tv0.0.0\ntest_lane4\t\t\tFAIL\tv0.0.0\n""")
 
         file = open(f'{self.TEST_OUTPUT_PREFIX2}_complete.txt', "r")
         actual = "".join(file.readlines())
         os.remove(f'{self.TEST_OUTPUT_PREFIX2}_complete.txt')
 
-        self.assertEqual(actual, """lane_id\trel_abundance\trel_abundance_status\tcontig_no\tcontig_no_status\tversion\ntest_lane1\t92.38\tPASS\t1\tPASS\tv0.0.0\ntest_lane2\t2.38\tFAIL\t500\tFAIL\tv0.0.0\ntest_lane3\t70.0\tFAIL\t3\tPASS\tv0.0.0\ntest_lane4\t\t\t501\tFAIL\tv0.0.0\n""")
+        self.assertEqual(actual, """lane_id\trel_abundance\trel_abundance_status\tcontig_no\tcontig_no_status\tQC_pipeline_version\ntest_lane1\t92.38\tPASS\t1\tPASS\tv0.0.0\ntest_lane2\t2.38\tFAIL\t500\tFAIL\tv0.0.0\ntest_lane3\t70.0\tFAIL\t3\tPASS\tv0.0.0\ntest_lane4\t\t\t501\tFAIL\tv0.0.0\n""")
