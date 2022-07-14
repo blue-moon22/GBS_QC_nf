@@ -58,7 +58,7 @@ def get_complete_qc_report(all_reports, version_file):
         for line in file:
             version = line.replace("\n", "")
 
-    df['version'] = version
+    df['QC_pipeline_version'] = version
 
     return df
 
