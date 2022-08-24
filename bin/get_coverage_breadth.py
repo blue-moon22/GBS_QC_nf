@@ -16,7 +16,10 @@ def get_coverage_breadth(qc_stats):
     with open(qc_stats, 'r') as stats:
         next(stats)
         for line in stats:
-            lane_ids_cov_breadth[line.split(',')[2]] = float(line.split(',')[18])
+            try:
+                lane_ids_cov_breadth[line.split(',')[2]] = float(line.split(',')[18])
+            except:
+                print("No coverage breadth available.")
 
     return lane_ids_cov_breadth
 

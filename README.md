@@ -62,14 +62,11 @@ Change:
 You should get two tab-delimited output reports `qc_report_summary.txt` and `qc_report_complete.txt` in the `--qc_reports_directory` you specified. `qc_report_summary.txt` gives the `lane_id` and PASS/FAIL `status`. `qc_report_complete.txt` gives all the PASS/FAIL status for each QC.
 
 ### Missing Data
-If there are empty values in  `qc_report_summary.txt` then at least one QC workflow may have failed. You can look in the `qc_report_complete.txt` to find which one.
-
-If there are empty values for:
-- `rel_abundance` then these lanes may not have been imported/imported properly with a kraken report.
-- `contig_no` or `gc_content` then these lanes may not have been assembled/assembled properly
-- `HET_SNPs` then these lanes may not have had variants called
-
-If this is the case contact `path-help@sanger.ac.uk` for help with this.
+In `qc_report_summary.txt`, if there are empty values:
+- `rel_abundance` then these lanes may not have been imported/imported properly with a kraken report. _Solution: Contact `path-help@sanger.ac.uk` to import those lanes again_
+- `contig_no`, `gc_content` or `genome_len` then these lanes may not have been assembled/assembled properly. _Solution: Check the status of the assemblies using the `pf status` command. If `-`, contact `path-help@sanger.ac.uk` to assemble those lanes. If `Failed`/`Running`/`Pending`, ask path-help to re-trigger the assemblies again (Although `Failed` assemblies can suggest a problem with the read coverage)_
+- `cov_breadth` or `cov_depth` then these were not calculated in `pf`. _Solution: Contact `path-help@sanger.ac.uk` to ask why these values for these lanes are not available in `pf data -s`._
+- `HET_SNPs` then these lanes may not have had SNPs called. _Solution: Check the status of the SNP call using `pf status` command. If `-`, contact `path-help@sanger.ac.uk` to call SNPs. If `Failed`/`Running`/`Pending`, ask path-help to re-trigger call SNPs again._
 
 ## Additional options
     --rel_abund_threshold           Pass read QC if rel_abundance is > rel_abund_threshold. (Default: 70)
