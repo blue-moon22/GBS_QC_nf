@@ -16,7 +16,10 @@ def get_coverage_depth(qc_stats):
     with open(qc_stats, 'r') as stats:
         next(stats)
         for line in stats:
-            lane_ids_cov_depth[line.split(',')[2]] = float(line.split(',')[14])
+            try:
+                lane_ids_cov_depth[line.split(',')[2]] = float(line.split(',')[14])
+            except:
+                print("No coverage depth available.")
 
     return lane_ids_cov_depth
 
