@@ -33,7 +33,7 @@ cd GBS_QC_nf
 
 2. Load nextflow module
 ```bash
-nextflow/22.10.2-5832
+module load nextflow/22.10.2-5832
 ```
 
 3. Run QC analysis using bsub:
