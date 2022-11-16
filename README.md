@@ -33,7 +33,7 @@ cd GBS_QC_nf
 
 2. Load nextflow module
 ```bash
-module load nextflow/20.10.0-5430
+nextflow/22.10.2-5832
 ```
 
 3. Run QC analysis using bsub:
@@ -94,5 +94,5 @@ pytest tests
 To test this pipeline on the farm:
 ```
 module load nextflow/20.10.0-5430
-bsub -G <YOUR GROUP> -o gbs_qc.o -e gbs_qc.e -R"select[mem>4000] rusage[mem=4000]" -M4000 'nextflow run main.nf --qc_reports_directory gbs_qc_report --lanes test_data/test_lanes.txt'
+bsub -G <YOUR GROUP> -o gbs_qc.o -e gbs_qc.e -R"select[mem>4000] rusage[mem=4000]" -M4000 'nextflow run main.nf --qc_reports_directory gbs_qc_report --lanes tests/test_data/test_lanes.txt'
 ```
