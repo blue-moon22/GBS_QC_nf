@@ -21,7 +21,7 @@ This pipeline provides QC information for lanes of Group B Strep (GBS) sequences
 
 1. Download pipeline in a directory where you keep your software or pipelines:
 ```bash
-git clone https://github.com/blue-moon22/GBS_QC_nf.git
+git clone https://github.com/sanger-bentley-group/GBS_QC_nf.git
 ```
 
 
@@ -33,12 +33,12 @@ cd GBS_QC_nf
 
 2. Load nextflow module
 ```bash
-module load nextflow/22.10.2-5832
+module load nextflow
 ```
 
 3. Run QC analysis using bsub:
 ```bash
-bsub -G team284 -o gbs_qc.o -e gbs_qc.e -R"select[mem>4000] rusage[mem=4000]" -M4000 'nextflow run main.nf --qc_reports_directory /path/to/gbs_qc_reports --lanes /path/to/gbs_lanes.txt -resume'
+bsub -o gbs_qc.%J.out -e gbs_qc.%J.err -R"select[mem>4000] rusage[mem=4000]" -M4000 'nextflow run main.nf --qc_reports_directory /path/to/gbs_qc_reports --lanes /path/to/gbs_lanes.txt'
 ```
 Change:
 - `/path/to/gbs_lanes.txt` to the file location of your list of lanes (that are imported and can be accessed via `pf`), e.g.
